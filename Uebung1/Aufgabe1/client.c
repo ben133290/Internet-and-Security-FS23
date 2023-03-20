@@ -5,35 +5,62 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#define PORT 8080
+#define PORT 6969
   
 int main(int argc, char const* argv[])
 {
-    int status, valread, client_fd;
-    struct sockaddr_in serv_addr;
+    
+    /*
+    check if supplied arguments are correct 
+    */
+
+    if (argc != 1) {
+        printf("usage: ./server <ip>\n");
+        return 1;
+    }
+
+    char* server_ip = argv[0];
+
+    int client_fd;
+    
     char* hello = "Hello from client";
     char buffer[1024] = { 0 };
+
+    /*
+    creates the client socket
+    server_fd is -1 if failed
+    AF_INET means it's IPv4
+    SOCK_STREAM means it's a tcp connection :)
+    */
+
     if ((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("\n Socket creation error \n");
         return -1;
     }
+
+    /*
+    Set socket address parameters to match socket defined above
+    */
   
+    struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
   
     // Convert IPv4 and IPv6 addresses from text to binary
     // form
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)
-        <= 0) {
-        printf(
-            "\nInvalid address/ Address not supported \n");
+    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+        printf("\nInvalid address/ Address not supported \n");
         return -1;
     }
+
+    /*
+    Here we connect to the server
+    */
+    
+    int valread;
+    int status;
   
-    if ((status
-         = connect(client_fd, (struct sockaddr*)&serv_addr,
-                   sizeof(serv_addr)))
-        < 0) {
+    if ((status = connect(client_fd, (struct sockaddr*) &serv_addr, sizeof(serv_addr))) < 0) {
         printf("\nConnection Failed \n");
         return -1;
     }
