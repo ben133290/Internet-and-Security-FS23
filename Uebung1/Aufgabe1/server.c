@@ -6,7 +6,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#define PORT 8080
+#define PORT 6969
 
 int main(int argc, char const* argv[])
 {
@@ -40,7 +40,7 @@ int main(int argc, char const* argv[])
 
     bzero (&my_addr, sizeof(my_addr)); // i have no idea wth this does but I found it online hehe
     my_addr.sin_family = AF_INET; // has to match the socket() call
-    my_addr.sin_port = htons(6969); // specify port to listen on
+    my_addr.sin_port = htons(PORT); // specify port to listen on
     my_addr.sin_addr.s_addr = htonl(INADDR_ANY); //allow the server to accept a client connection on any interface
     
     // " (struct sockaddr*)&my_addr " is just ugly because it's c, in java this would be " SocketAdress myAddress "
