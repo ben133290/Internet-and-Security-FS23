@@ -10,6 +10,7 @@
 *.ko
 *.obj
 *.elf
+*.DS_Store
 
 # Linker output
 *.ilk
