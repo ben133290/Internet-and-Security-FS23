@@ -97,12 +97,10 @@ int main(int argc, char const* argv[])
     printf("%s\n", buffer);
 
     //TODO: Start a thread, that listens for user input on the console an then calls send()
-    /*
     pthread_t sendThread;
     pthread_create(&sendThread, NULL, sendThreadFun, &client_socket);
-    pthread_join(sendThread, NULL);
-    */
-   
+    //pthread_join(sendThread, NULL);
+
     //TODO: make a while loop where read() is called, and the recieved message is printed to the console, don't forget to clear buffer
     while (strcmp(buffer, "stop") != 0) {
 
