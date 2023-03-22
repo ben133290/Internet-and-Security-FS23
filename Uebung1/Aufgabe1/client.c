@@ -66,10 +66,16 @@ int main(int argc, char const* argv[])
         printf("\nConnection Failed \n");
         return -1;
     }
+
     send(client_fd, hello, strlen(hello), 0);
     printf("Hello message sent\n");
     valread = read(client_fd, buffer, 1024);
     printf("%s\n", buffer);
+
+    //TODO: Start a thread, that listens for user input on the console an then calls send()
+
+    //TODO: make a while loop where read() is called, and the recieved message is printed to the console, don't forget to clear buffer
+
   
     // closing the connected socket
     close(client_fd);

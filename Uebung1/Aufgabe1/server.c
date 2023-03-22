@@ -74,12 +74,21 @@ int main(int argc, char const* argv[])
         exit(EXIT_FAILURE);
     }
 
-    // read (sockfd, buffer, sizeof(buffer));
+    /*
+    usage: read (sockfd, buffer, ssize_t N);
+    the read() function reads N bytes of input into the memory area indicated by buffer.
+    */ 
+
     valread = read(client_socket, buffer, 1024);
     printf("%s\n", buffer);
+
     send(client_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
-  
+    
+    //TODO: Start a thread, that listens for user input on the console an then calls send()
+
+    //TODO: make a while loop where read() is called, and the recieved message is printed to the console
+    // don't forget to clear buffer
 
     /*
     We have to close the socket after we're done 'cause reasons.
