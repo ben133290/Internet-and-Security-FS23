@@ -5,7 +5,31 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <pthread.h>
 #define PORT 6969
+
+void *sendThreadFun(void *vargp) {
+
+    int client_socket = *(int *)vargp;
+
+    // read from system in
+    char message[1024];
+
+    while (strcmp(message,"stop") != 0)
+    {
+        // clear buffer
+        for (int i = 0; i < 1024; i++) {
+            message[i] = '\0';
+        }
+
+        // Get and save the text
+        scanf("%s", message);
+        send(client_socket, message, strlen(message), 0);
+        sleep(1);
+    }
+        
+    return NULL;
+}
   
 int main(int argc, char const* argv[])
 {
@@ -23,7 +47,7 @@ int main(int argc, char const* argv[])
     const char* server_ip = argv[1];
     printf("Connecting to server at ip: %s\n", server_ip);
 
-    int client_fd;
+    int client_socket;
     
     char* hello = "Hello from client";
     char buffer[1024] = { 0 };
@@ -35,7 +59,7 @@ int main(int argc, char const* argv[])
     SOCK_STREAM means it's a tcp connection :)
     */
 
-    if ((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((client_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("\n Socket creation error \n");
         return -1;
     }
@@ -62,22 +86,38 @@ int main(int argc, char const* argv[])
     int valread;
     int status;
   
-    if ((status = connect(client_fd, (struct sockaddr*) &serv_addr, sizeof(serv_addr))) < 0) {
+    if ((status = connect(client_socket, (struct sockaddr*) &serv_addr, sizeof(serv_addr))) < 0) {
         printf("\nConnection Failed \n");
         return -1;
     }
 
-    send(client_fd, hello, strlen(hello), 0);
+    send(client_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
-    valread = read(client_fd, buffer, 1024);
+    valread = read(client_socket, buffer, 1024);
     printf("%s\n", buffer);
 
     //TODO: Start a thread, that listens for user input on the console an then calls send()
-
+    /*
+    pthread_t sendThread;
+    pthread_create(&sendThread, NULL, sendThreadFun, &client_socket);
+    pthread_join(sendThread, NULL);
+    */
+   
     //TODO: make a while loop where read() is called, and the recieved message is printed to the console, don't forget to clear buffer
+    while (strcmp(buffer, "stop") != 0) {
 
+        // clear buffer
+        for (int i = 0; i < 1024; i++) {
+            buffer[i] = '\0';
+        }
+
+        valread = read(client_socket, buffer, 1024);
+        printf("%s\n", buffer);
+        sleep(1);
+
+    }
   
     // closing the connected socket
-    close(client_fd);
+    close(client_socket);
     return 0;
 }

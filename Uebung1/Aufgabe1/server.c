@@ -6,7 +6,31 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <pthread.h>
 #define PORT 6969
+
+void *sendThreadFun(void *vargp) {
+
+    int client_socket = *(int *)vargp;
+
+    // read from system in
+    char message[1024];
+
+    while (strcmp(message,"stop") != 0)
+    {
+        // clear buffer
+        for (int i = 0; i < 1024; i++) {
+            message[i] = '\0';
+        }
+
+        // Get and save the text
+        scanf("%s", message);
+        send(client_socket, message, strlen(message), 0);
+        sleep(1);
+    }
+        
+    return NULL;
+}
 
 int main(int argc, char const* argv[])
 {
@@ -38,7 +62,7 @@ int main(int argc, char const* argv[])
     struct sockaddr_in my_addr; // comes from one of the libraries, don't know which one
     int addrlen = sizeof(my_addr); // length of the address structure because we give the pointer as a param
 
-    bzero (&my_addr, sizeof(my_addr)); // i have no idea wth this does but I found it online hehe
+    bzero(&my_addr, sizeof(my_addr)); // i have no idea wth this does but I found it online hehe
     my_addr.sin_family = AF_INET; // has to match the socket() call
     my_addr.sin_port = htons(PORT); // specify port to listen on
     my_addr.sin_addr.s_addr = htonl(INADDR_ANY); //allow the server to accept a client connection on any interface
@@ -86,9 +110,24 @@ int main(int argc, char const* argv[])
     printf("Hello message sent\n");
     
     //TODO: Start a thread, that listens for user input on the console an then calls send()
+    pthread_t sendThread;
+    pthread_create(&sendThread, NULL, sendThreadFun, &client_socket);
+    pthread_join(sendThread, NULL);
 
     //TODO: make a while loop where read() is called, and the recieved message is printed to the console
     // don't forget to clear buffer
+    while (strcmp(buffer, "stop") != 0) {
+
+        // clear buffer
+        for (int i = 0; i < 1024; i++) {
+            buffer[i] = '\0';
+        }
+
+        valread = read(client_socket, buffer, 1024);
+        printf("%s\n", buffer);
+        sleep(1);
+        
+    }
 
     /*
     We have to close the socket after we're done 'cause reasons.
