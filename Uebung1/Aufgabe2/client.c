@@ -16,9 +16,9 @@ int main()
 {   
 
     // initialize values
-    printf("Enter l:name:ip:port to log in");
+    printf("Enter l name ip:port to log in\n");
     char message[1024];
-    scanf("%[^\n]", message);
+    if (scanf("%[^\n]", message) < 0) { printf("couldn't scan\n"); }
 
 
 
@@ -36,7 +36,7 @@ int main()
       
     // create datagram socket
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-      
+    
     // connect to server
     if(connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
     {
@@ -44,13 +44,14 @@ int main()
         exit(0);
     }
 
-
+    printf("Connected to server\n");
 
 
   
     // send l:name:ip:port to server
-    sendto(sockfd, message, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
-
+    if (sendto(sockfd, message, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr)) < 0) { 
+        printf("Couldn't send log in!\n"); 
+    }
 
     // read client input (name)
     char nameOfOtherClient[40];
