@@ -15,12 +15,16 @@
 int main()
 {   
 
-    printf("Enter name:ip:port to log in");
+    // initialize values
+    printf("Enter l:name:ip:port to log in");
     char message[1024];
     scanf("%[^\n]", message);
 
-    char buffer[100];
-    
+
+
+
+
+    // Connect to Server
     int sockfd, n;
     struct sockaddr_in servaddr;
       
@@ -39,25 +43,32 @@ int main()
         printf("\n Error : Connect Failed \n");
         exit(0);
     }
+
+
+
+
   
-    // request to send datagram
-    // no need to specify server address in sendto
-    // connect stores the peers IP and port
+    // send l:name:ip:port to server
     sendto(sockfd, message, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
 
 
     // read client input (name)
+    char nameOfOtherClient[40];
+    char request[] = "i:";
+    scanf("%[^\n]", nameOfOtherClient);
+    strcat(request, nameOfOtherClient);
+
+    // send request to server
+    sendto(sockfd, request, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
 
     // read server message
-
-    // start udp connection
-  
-    
-      
-    // waiting for response
+    char buffer[100];
     recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
     puts(buffer);
-  
+
+    // start udp connection
+    
+
     // close the descriptor
     close(sockfd);
 }
