@@ -14,8 +14,13 @@
 // Driver code
 int main()
 {   
+
+    printf("Enter name:ip:port to log in");
+    char message[1024];
+    scanf("%[^\n]", message);
+
     char buffer[100];
-    char *message = "Hello Server";
+    
     int sockfd, n;
     struct sockaddr_in servaddr;
       
@@ -39,6 +44,15 @@ int main()
     // no need to specify server address in sendto
     // connect stores the peers IP and port
     sendto(sockfd, message, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
+
+
+    // read client input (name)
+
+    // read server message
+
+    // start udp connection
+  
+    
       
     // waiting for response
     recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);

@@ -8,19 +8,24 @@
 #define PORT 5000
 #define MAXLINE 1000
 
-struct name_ipport
+typedef struct name_ipport
 {
-    char name[30];
-    char ipport[30];
-};
+    char * name;
+    char * ipport;
+} clientInfo;
 
   
 // Driver code
 int main()
 {   
 
-    struct name_ipport data[10];
+    clientInfo data[10];
 
+    clientInfo info;
+    info.name = "ben";
+    info.ipport = "127.0.0.1:4000";
+
+    data[1] = info;
 
 
     char buffer[100];
@@ -42,7 +47,7 @@ int main()
 
     while (1) {
 
-        // revieve message
+        // recieve message
 
         //if message log in message then save data
 
