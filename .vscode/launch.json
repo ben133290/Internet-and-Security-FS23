@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/ben/Library/Mobile Documents/com~apple~CloudDocs/Studium/FS23/Introduction to Internet and Security/Exercises/Internet-and-Security-FS23/Uebung1/Aufgabe2",
+      "program": "/Users/ben/Library/Mobile Documents/com~apple~CloudDocs/Studium/FS23/Introduction to Internet and Security/Exercises/Internet-and-Security-FS23/Uebung1/Aufgabe2/build/Debug/outDebug"
+    }
+  ]
+}

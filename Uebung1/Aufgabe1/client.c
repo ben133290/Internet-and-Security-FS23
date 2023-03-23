@@ -1,5 +1,3 @@
-// Client side C/C++ program to demonstrate Socket
-// programming
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +21,7 @@ void *sendThreadFun(void *vargp) {
         }
 
         // Get and save the text
-        scanf("%s", message);
+        scanf("%[^\n]", message);
         send(client_socket, message, strlen(message), 0);
         sleep(1);
     }
