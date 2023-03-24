@@ -2,6 +2,7 @@ import socket
 import threading
 import struct
 import sys
+import select
 
 if __name__ == '__main__':
     serverPort = 5000
@@ -18,53 +19,53 @@ if __name__ == '__main__':
     
     # gets address information of other client 
     inMessage, addr = clientSocket.recvfrom(1024)
-    inMessage = str(inMessage, 'utf-8')       
-    print("vom server received: "  + inMessage)   
+    inMessage = str(inMessage, 'utf-8')
+    print("List of rooms: "  + inMessage)
 
     # close the socket to the server
     clientSocket.close()
 
-    # room ip and port
-    MCAST_GRP = '224.1.1.1' # make changable later
-    MCAST_PORT = 5004
+    # lets user set room ip and port
+    MCAST_GRP = input("Enter the multicast ip of the room you want to enter: ")
+    MCAST_PORT = int(input("Enter the port number of the room: "))
 
-    # Socket für das Senden
-    mSockSend = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    mSockSend.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, socket.IPPROTO_UDP)
+    # create socket for sending
+    sendSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    sendSocket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, socket.IPPROTO_UDP)
 
-    # Socket für das Empfangen
-    mSockRec = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    mSockRec.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    mSockRec.bind((ipRoom, portRoom))
-    mreq = struct.pack('4sl', socket.inet_aton(ipRoom), socket.INADDR_ANY)
-    mSockRec.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+    # Socket für recieving messages from other clients
+    recvSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    recvSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    recvSocket.bind((MCAST_GRP, MCAST_PORT))
+    mreq = struct.pack('4sl', socket.inet_aton(MCAST_GRP), socket.INADDR_ANY)
+    recvSocket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
-    # Jetzt kann das Chatting beginnen
-    print('c~ You entered a room. Enter a message to chat:')
-    socketDescriptor = mSockRec.fileno()  # descriptor nr für andere Clients
-    inputDescriptor = sys.stdin.fileno()  # descriptor nr für die eigene Eingabe
+    # Entered room
+    print('You entered a room. Enter a message to chat:')
+    socketDescriptor = recvSocket.fileno()  # descriptor nr for other Clients
+    inputDescriptor = sys.stdin.fileno()  # descriptor nr for user input
 
 while True:
     readReady, writeReady, exceptionReady = select.select([socketDescriptor, inputDescriptor], [], [])
 
-    # Behandlung aller eingehenden Inhalte (über Socket-Verbindung oder Tastatur)
+    # parse inputs
     for descriptor in readReady:
 
-        # wenn Nachricht von anderem Client kommt
+        # recieve message from group
         if descriptor is socketDescriptor:
-            msg = clientSocket.recv(10240)
+            msg = recvSocket.recv(10240)
             print(msg.decode())
             break
 
-        # wenn Nachricht von eigener Eingabe kommt
+        # send user input to group
         if descriptor is inputDescriptor:
-            inp = input()
-            msg = inp
-            clientSocket.sendto(msg.encode(), tuple((ipRoom, portRoom)))
+            user_input = input()
+            msg = user_input
+            sendSocket.sendto(msg.encode(), tuple((MCAST_GRP, MCAST_PORT)))
 
-            # Schlüsselwort, um die Unterhaltung und Verbindung abzubrechen
-            if inp == 'end':
-                print('c~ socket is closing now')
+            # user can type end to stop client
+            if user_input == 'end':
+                print('socket closing now')
                 clientSocket.close()
-                mSockSend.close()
+                sendSocket.close()
             break
