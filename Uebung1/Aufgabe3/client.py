@@ -1,6 +1,7 @@
 import socket
 import threading
 import struct
+import sys
 
 if __name__ == '__main__':
     serverPort = 5000
@@ -20,28 +21,50 @@ if __name__ == '__main__':
     inMessage = str(inMessage, 'utf-8')       
     print("vom server received: "  + inMessage)   
 
+    # close the socket to the server
+    clientSocket.close()
+
+    # room ip and port
     MCAST_GRP = '224.1.1.1' # make changable later
     MCAST_PORT = 5004
 
-    ## UDP MULTICAST PART
-    clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    clientSocket.bind((MCAST_GRP, MCAST_PORT))
-    mreq = struct.pack("4sl", socket.inet_aton(MCAST_GRP), socket.INADDR_ANY)
-    clientSocket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-    MULTICAST_TTL = 2
+    # Socket für das Senden
+    mSockSend = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    mSockSend.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, socket.IPPROTO_UDP)
 
-    def send_function(clientSocket):
-        while True:
-            user_input = input("enter chat message: ")
-            clientSocket.sendto(bytes(user_input, 'utf-8'), (MCAST_GRP, MCAST_PORT))
+    # Socket für das Empfangen
+    mSockRec = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    mSockRec.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    mSockRec.bind((ipRoom, portRoom))
+    mreq = struct.pack('4sl', socket.inet_aton(ipRoom), socket.INADDR_ANY)
+    mSockRec.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
-    sendThread = threading.Thread(target=send_function, args=(clientSocket,))
-    sendThread.start()
+    # Jetzt kann das Chatting beginnen
+    print('c~ You entered a room. Enter a message to chat:')
+    socketDescriptor = mSockRec.fileno()  # descriptor nr für andere Clients
+    inputDescriptor = sys.stdin.fileno()  # descriptor nr für die eigene Eingabe
 
+while True:
+    readReady, writeReady, exceptionReady = select.select([socketDescriptor, inputDescriptor], [], [])
 
-    def recieve_function(clientSocket):
-        while True:
-            print(clientSocket.recv(10240))
-    
-    recieveThread = threading.Thread(target=recieve_function, args=(clientSocket,))
-    recieveThread.start()
+    # Behandlung aller eingehenden Inhalte (über Socket-Verbindung oder Tastatur)
+    for descriptor in readReady:
+
+        # wenn Nachricht von anderem Client kommt
+        if descriptor is socketDescriptor:
+            msg = clientSocket.recv(10240)
+            print(msg.decode())
+            break
+
+        # wenn Nachricht von eigener Eingabe kommt
+        if descriptor is inputDescriptor:
+            inp = input()
+            msg = inp
+            clientSocket.sendto(msg.encode(), tuple((ipRoom, portRoom)))
+
+            # Schlüsselwort, um die Unterhaltung und Verbindung abzubrechen
+            if inp == 'end':
+                print('c~ socket is closing now')
+                clientSocket.close()
+                mSockSend.close()
+            break
