@@ -18,17 +18,17 @@ list_of_people = []
 
 # create socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-
+server_socket.bind((server_address, server_port))
 
 
 while True:
 
+    print("waiting for messages\n")
     data, addr = server_socket.recvfrom(1024)
     message = str(data, 'utf-8')
-    print("received message: %s" % newest_message)
+    print("received message: " + message)
 
-    words = newest_message.split()
+    words = message.split()
     if words[0] == "l":
         new_person = Person(words[1], words[2], words[3])
         list_of_people.append(new_person)
@@ -37,7 +37,7 @@ while True:
        for person in list_of_people:
           if person.name == words[1]:
             response = "" + person.ip + " " + person.port 
-            server_socket.sendto(response, addr)
+            server_socket.sendto(bytes(response, 'utf-8'), addr)
     
 
 
