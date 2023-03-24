@@ -13,7 +13,6 @@ typedef struct name_ipport
     char * name;
     char * ipport;
 } clientInfo;
-
   
 // Driver code
 int main()
@@ -29,7 +28,7 @@ int main()
 
 
     char buffer[100];
-    char *message = "Hello Client";
+    char * message = "Test message";
     int listenfd, len;
     struct sockaddr_in servaddr, cliaddr;
     bzero(&servaddr, sizeof(servaddr));
@@ -41,17 +40,33 @@ int main()
     servaddr.sin_family = AF_INET; 
    
     // bind server address to socket descriptor
-    bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
+    //bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
        
     //receive the datagram
+    int i = 0;
 
     while (1) {
 
         // recieve message
+        recvfrom(listenfd, buffer, sizeof(buffer), 0, (struct sockaddr*)&servaddr, sizeof(servaddr));
 
         //if message log in message then save data
+        char * command_type = strsep(buffer, " ");
+        char * parameter_one = strsep(buffer, " ");
+        char * parameter_two = strsep(buffer, " ");
+
+        if (strcmp(command_type, "l") == 0) {
+            strcpy(data[i].name, parameter_one);
+            strcpy(data[i].ipport, parameter_two);
+            i++;
+        }
 
         //if message get info message the giva data
+        if (strcmp(command_type, "n") == 0) {
+            sendto(listenfd, message, MAXLINE, 0, (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+        }
+
+        buffer[0] = '\0'; // clear buffer
 
     }
 

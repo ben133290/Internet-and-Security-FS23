@@ -19,13 +19,11 @@ int main()
     printf("Enter l name ip:port to log in\n");
     char message[1024];
     if (scanf("%[^\n]", message) < 0) { printf("couldn't scan\n"); }
-
-
-
+    printf("%s\n", message);
 
 
     // Connect to Server
-    int sockfd, n;
+    int server_socket;
     struct sockaddr_in servaddr;
       
     // clear servaddr
@@ -35,41 +33,37 @@ int main()
     servaddr.sin_family = AF_INET;
       
     // create datagram socket
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    
-    // connect to server
-    if(connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
-    {
-        printf("\n Error : Connect Failed \n");
-        exit(0);
-    }
+    server_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    printf("Created server socket\n");
 
-    printf("Connected to server\n");
-
-
-  
     // send l:name:ip:port to server
-    if (sendto(sockfd, message, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr)) < 0) { 
-        printf("Couldn't send log in!\n"); 
+    if (sendto(server_socket, message, (strlen(message) + 1), 0, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0) { 
+        printf("Couldn't send log in!\n");
     }
 
     // read client input (name)
-    char nameOfOtherClient[40];
-    char request[] = "i:";
-    scanf("%[^\n]", nameOfOtherClient);
-    strcat(request, nameOfOtherClient);
+    char requestMessage[40];
+    printf("Write i name");
+    scanf("%[^\n]", requestMessage);
 
     // send request to server
-    sendto(sockfd, request, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
+    if (sendto(server_socket, requestMessage, (strlen(requestMessage) + 1), 0, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0) {
+        printf("Couldn't request ip and port of other user\n"); 
+    }
 
     // read server message
     char buffer[100];
-    recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
+    recvfrom(server_socket, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
     puts(buffer);
+
+    // read out ip and and port
+    char * ip_address = strsep(buffer, ':');
+    char * port = strsep(buffer, ':');
+
 
     // start udp connection
     
 
     // close the descriptor
-    close(sockfd);
+    close(server_socket);
 }
