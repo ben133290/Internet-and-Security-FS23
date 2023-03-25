@@ -12,11 +12,13 @@ if __name__ == '__main__':
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     clientSocket.connect(server)
     print("connected to server \n")
-    clientSocket.sendall("test vom client".encode())
+
+    # clientSocket.sendall("clientTest".encode())
 
     socketDescriptor = clientSocket.fileno()
     inputDescriptor = sys.stdin.fileno()
 
+    # while loop using select which recognizes if things are sent or received
     while True:
         readReady, writeReady, exceptionReady = select.select([socketDescriptor, inputDescriptor], [], [])
 
@@ -25,7 +27,7 @@ if __name__ == '__main__':
 
             # receiving messages
             if descriptor is socketDescriptor:
-                msg = clientSocket.recv(10240)
+                msg = clientSocket.recv(1024)
                 print("peer: " + msg.decode())
                 break
 

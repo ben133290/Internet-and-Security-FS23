@@ -16,11 +16,12 @@ if __name__ == '__main__':
     serverSocket.listen()
     connection, address = serverSocket.accept()     # accepts new connections
     print("client connected \n")
-    connection.sendall("Test".encode());
 
-    socketDescriptor = serverSocket.fileno()
+
+    socketDescriptor = connection.fileno()
     inputDescriptor = sys.stdin.fileno()
 
+    # while loop using select which recognizes if things are sent or received
     while True:
         readReady, writeReady, exceptionReady = select.select([socketDescriptor, inputDescriptor], [], [])
 
@@ -29,8 +30,8 @@ if __name__ == '__main__':
 
             # receiving messages
             if descriptor is socketDescriptor:
-                msg = serverSocket.recv(10240)
-                print("peer:" + msg.decode())
+                msg = connection.recv(1024)
+                print("peer: " + msg.decode())
                 break
 
             # sending input
@@ -42,5 +43,5 @@ if __name__ == '__main__':
                 # typing "end" will stop client
                 if user_input == "end":
                     print("socket closing now")
-                    serverSocket.close()
+                    connection.close()
                 break
