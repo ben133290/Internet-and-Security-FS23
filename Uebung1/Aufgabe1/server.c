@@ -123,7 +123,7 @@ int main(int argc, char const* argv[])
 
         valread = read(client_socket, buffer, 1024);
         printf("peer: %s\n", buffer);
-        sleep(1);
+        // sleep(1);
         
     }
 
