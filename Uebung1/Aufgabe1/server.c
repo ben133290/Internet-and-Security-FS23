@@ -35,7 +35,7 @@ int main(int argc, char const* argv[])
     
     int opt = 1;
     char buffer[1024] = { 0 };
-    char* hello = "Hello from server";
+    char* hello = "connected to server";
 
     /* 
     Creating server socket, 
@@ -105,7 +105,7 @@ int main(int argc, char const* argv[])
     printf("%s\n", buffer);
 
     send(client_socket, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
+    // printf("Hello message sent\n");
     
     //TODO: Start a thread, that listens for user input on the console an then calls send()
     pthread_t sendThread;
@@ -122,7 +122,7 @@ int main(int argc, char const* argv[])
         }
 
         valread = read(client_socket, buffer, 1024);
-        printf("%s\n", buffer);
+        printf("peer: %s\n", buffer);
         sleep(1);
         
     }

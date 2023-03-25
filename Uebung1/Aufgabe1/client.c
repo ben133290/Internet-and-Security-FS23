@@ -47,7 +47,7 @@ int main(int argc, char const* argv[])
 
     int client_socket;
     
-    char* hello = "Hello from client";
+    char* hello = "client has connected";
     char buffer[1024] = { 0 };
 
     /*
@@ -108,7 +108,7 @@ int main(int argc, char const* argv[])
         }
 
         valread = read(client_socket, buffer, 1024);
-        printf("%s\n", buffer);
+        printf("peer: %s\n", buffer);
         sleep(1);
 
     }
