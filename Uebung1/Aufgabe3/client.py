@@ -1,11 +1,16 @@
+from contextlib import contextmanager
 import socket
 import threading
 import struct
 import sys
 import select
+import os
 
 if __name__ == '__main__':
+
+    null_device = open(os.devnull, "w")
     
+    nickname = input("Enter your name: ")
     serverAddress = input("Enter server address: ")
     serverPort = input("Enter server port: ")
     server = (serverAddress, int(serverPort))
@@ -51,7 +56,7 @@ while True:
     # parse inputs
     for descriptor in readReady:
 
-        # recieve message from group
+        # receive message from group
         if descriptor is socketDescriptor:
             msg = recvSocket.recv(10240)
             print(msg.decode())
@@ -59,8 +64,9 @@ while True:
 
         # send user input to group
         if descriptor is inputDescriptor:
+
             user_input = input()
-            msg = user_input
+            msg = nickname + ": " + user_input
             sendSocket.sendto(msg.encode(), tuple((MCAST_GRP, MCAST_PORT)))
 
             # user can type end to stop client

@@ -3,11 +3,11 @@ import threading
 import sys
 
 if __name__ == '__main__':
-    serverAddress = input("Enter server ip:")
+    serverAddress = input("Enter server ip: ")
     serverPort = input("Enter server port: ")
     server = (serverAddress, int(serverPort))
 
-    clientInfo = input("Please enter: 'name ip port'")
+    clientInfo = input("Please enter your information: 'name ip port': ")
     clientInfoList = clientInfo.split()
     client_address = clientInfoList[1]
     client_port = int(clientInfoList[2])
@@ -20,6 +20,7 @@ if __name__ == '__main__':
     # em server en afrog schecke metem name 
     requestMessage = input("Who do you want to message? (Wait for other person to log in first!)--->")
     clientSocket.sendto(bytes("n " + requestMessage, 'utf-8'), server)
+    peer = requestMessage
     
     # gets address information of other client 
     inMessage, addr = clientSocket.recvfrom(1024)
@@ -27,7 +28,7 @@ if __name__ == '__main__':
     ip, port = inMessage.split()
     other_client_address = (ip, int(port))
     partner = (ip, port)         
-    print("vom server received: "  + inMessage)           
+    # print("vom server received: "  + inMessage)           
     
     # connecting to the other client
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -35,7 +36,7 @@ if __name__ == '__main__':
 
     def send_function(clientSocket):
         while True:
-            user_input = input("enter chat message: ")
+            user_input = input()
             clientSocket.sendto(bytes(user_input, 'utf-8'), other_client_address)
 
     sendThread = threading.Thread(target=send_function, args=(clientSocket,))
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     def recieve_function(clientSocket):
         while True:
             message_from_other_client, address = clientSocket.recvfrom(1024)
-            print(str(message_from_other_client, 'utf-8'))
+            print(peer + ": " + str(message_from_other_client, 'utf-8'))
     
     recieveThread = threading.Thread(target=recieve_function, args=(clientSocket,))
     recieveThread.start()
