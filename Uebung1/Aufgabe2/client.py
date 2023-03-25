@@ -3,8 +3,8 @@ import threading
 import sys
 
 if __name__ == '__main__':
-    serverPort = 5000
-    serverAddress = "127.0.0.1"
+    serverAddress = input("Enter server ip:")
+    serverPort = input("Enter server port: ")
     server = (serverAddress, int(serverPort))
 
     clientInfo = input("Please enter: 'name ip port'")
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     clientSocket.sendto(bytes("l " + clientInfo, 'utf-8'), server)
 
     # em server en afrog schecke metem name 
-    requestMessage = input("Who do you want to message? --->")
+    requestMessage = input("Who do you want to message? (Wait for other person to log in first!)--->")
     clientSocket.sendto(bytes("n " + requestMessage, 'utf-8'), server)
     
     # gets address information of other client 

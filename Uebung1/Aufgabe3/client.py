@@ -5,9 +5,9 @@ import sys
 import select
 
 if __name__ == '__main__':
-    serverPort = 5000
     
-    serverAddress = "127.0.0.1"
+    serverAddress = input("Enter server address: ")
+    serverPort = input("Enter server port: ")
     server = (serverAddress, int(serverPort))
 
     clientInfo = input("Press enter to get chatroom list")
