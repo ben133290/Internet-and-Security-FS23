@@ -22,7 +22,5 @@ while True:
     message = str(data, 'utf-8')
     print("received message: " + message)
 
-    server_socket.sendto(bytes(list_of_chat_rooms, 'utf-8'), addr)
+    server_socket.sendto(bytes(list_of_chat_rooms, 'utf-8'), addr) 
     
-
-

@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad3b3e0b-ef6f-4aed-b974-12fff72f3627" name="Changes" comment="" />
+    <list default="true" id="ad3b3e0b-ef6f-4aed-b974-12fff72f3627" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Uebung1/Aufgabe3/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uebung1/Aufgabe3/server.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,6 +42,21 @@
       <recent name="C:\Users\maria\Documents\Uni\23 FS\Internet &amp; Security\Übungen\Internet-and-Security-FS23\Uebung1" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Internet-and-Security-FS23" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Internet-and-Security-FS23" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -50,6 +67,7 @@
       <updated>1679409371846</updated>
       <workItem from="1679409374000" duration="1198000" />
       <workItem from="1679478914382" duration="46000" />
+      <workItem from="1681124420625" duration="12000" />
     </task>
     <servers />
   </component>
